@@ -1,0 +1,23 @@
+ - name: Send mail test
+   hosts: ubuntus
+   become: true
+   tasks:
+     - name: Check that the reboot-required file exists
+       stat:
+         path: /var/run/reboot-required
+       register: stat_result
+
+     - name: Sending an e-mail using Zoho SMTP servers
+       community.general.mail:
+         host: smtp.zoho.eu
+         port: 587
+         username: gabriel.passadore@itpartners.com.ar
+         password: maximus8769
+         secure: starttls
+         sender: gabriel.passadore@itpartners.com.ar
+         to: Gabriel Passadore <gabrielpassadore@gmail.com>
+         subject: Ansible Test
+         body: System {{ ansible_hostname }} needs a reboot after upgrade.
+       when: stat_result.stat.exists
+       delegate_to: localhost
+
